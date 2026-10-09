@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum SeatStatus {
+  AVAILABLE
+  LOCKED
+  BOOKED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  venue       String
+  shows       Show[]
+  createdAt   DateTime @default(now())
+}
+
+model Show {
+  id        String   @id @default(uuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  startTime DateTime
+  seats     Seat[]
+  createdAt DateTime @default(now())
+}
+
+model Seat {
+  id         String     @id @default(uuid())
+  showId     String
+  show       Show       @relation(fields: [showId], references: [id], onDelete: Cascade)
+  seatNumber String     // e.g. "A1", "A2"
+  price      Float
+  status     SeatStatus @default(AVAILABLE)
+  bookings   Booking[]
+
+  @@unique([showId, seatNumber]) // Duplicate seat numbers in same show prevent karne ke liye
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  seatId    String
+  seat      Seat          @relation(fields: [seatId], references: [id])
+  status    BookingStatus @default(PENDING)
+  expiresAt DateTime      // 10 mins hold time
+  createdAt DateTime      @default(now())
+}

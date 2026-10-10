@@ -2,8 +2,8 @@ import dotenv from "dotenv"
 dotenv.config();
 import express, { urlencoded } from "express";
 import cookieParser from "cookie-parser";
-import authRouter from "./routes/auth.route.js";
-
+import authRouter from "./routes/auth.route.ts";
+import eventRouter from "./routes/event.route.ts";
 
 const app = express();
 const PORT = process.env.PORT;
@@ -13,6 +13,7 @@ app.use(cookieParser());
 
 
 app.use('/api/v1/auth' , authRouter)
+app.use('/api/v1/events' , eventRouter)
 app.get('/health' ,(req , res)=>{
     res.status(200).json(
         {

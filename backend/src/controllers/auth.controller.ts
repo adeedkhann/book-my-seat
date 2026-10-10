@@ -106,7 +106,7 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const logout = async (req: Request, res: Response) => {
+export const logoutUser = async (req: Request, res: Response) => {
   return res
     .clearCookie("token", cookieOptions)
     .status(200)

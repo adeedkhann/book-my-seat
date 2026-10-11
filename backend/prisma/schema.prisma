@@ -56,6 +56,7 @@ model Show {
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   startTime DateTime
   seats     Seat[]
+  bookings  Booking[]
   createdAt DateTime @default(now())
 }
 
@@ -71,13 +72,27 @@ model Seat {
   @@unique([showId, seatNumber]) // Duplicate seat numbers in same show prevent karne ke liye
 }
 
+// model Booking {
+//   id        String        @id @default(uuid())
+//   userId    String
+//   user      User          @relation(fields: [userId], references: [id])
+//   seatId    String
+//   seat      Seat          @relation(fields: [seatId], references: [id])
+//   status    BookingStatus @default(PENDING)
+//   expiresAt DateTime      // 10 mins hold time
+//   createdAt DateTime      @default(now())
+// }
+
 model Booking {
   id        String        @id @default(uuid())
   userId    String
-  user      User          @relation(fields: [userId], references: [id])
+  showId    String
   seatId    String
-  seat      Seat          @relation(fields: [seatId], references: [id])
   status    BookingStatus @default(PENDING)
-  expiresAt DateTime      // 10 mins hold time
+  expiresAt DateTime?
   createdAt DateTime      @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  show Show @relation(fields: [showId], references: [id])
+  seat Seat @relation(fields: [seatId], references: [id])
 }

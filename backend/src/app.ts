@@ -14,7 +14,7 @@ app.use(cookieParser());
 
 app.use('/api/v1/auth' , authRouter)
 app.use('/api/v1/events' , eventRouter)
-app.use("/api/booking", bookingRoutes);
+app.use("/api/v1/booking", bookingRoutes);
 app.get('/health' ,(req , res)=>{
     res.status(200).json(
         {

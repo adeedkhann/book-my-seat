@@ -1,5 +1,6 @@
 import { AuthenticatedRequest } from "../middlewares/auth.middleware.ts";
 import { redis } from "../config/redis.ts";
+import { Response } from "express";
 import { prisma } from "../config/db.ts";
 
 export const confirmBooking = async (
@@ -43,6 +44,7 @@ export const confirmBooking = async (
           showId,
           seatId,
           status: "CONFIRMED",
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000),
         },
       });
 
